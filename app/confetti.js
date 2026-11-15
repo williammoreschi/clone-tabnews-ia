@@ -1,7 +1,11 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import ReactConfetti from "react-confetti";
+
+const ReactConfetti = dynamic(() => import("react-confetti"), {
+  ssr: false,
+});
 
 export default function Confetti() {
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -15,7 +19,7 @@ export default function Confetti() {
     }
 
     updateSize();
-    window.addEventListener("resize", updateSize);
+    window.addEventListener("resize", updateSize, { passive: true });
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 

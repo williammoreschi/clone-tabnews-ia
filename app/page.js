@@ -1,6 +1,102 @@
+import { Suspense } from "react";
 import Confetti from "./confetti";
 
 export const dynamic = "force-dynamic";
+
+const mainStyle = {
+  minHeight: "100vh",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "2rem",
+  fontFamily:
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+  backgroundColor: "#0d1117",
+  color: "#e6edf3",
+  textAlign: "center",
+  boxSizing: "border-box",
+};
+
+const containerStyle = { maxWidth: "680px" };
+
+const cardStyle = {
+  padding: "1.5rem",
+  borderRadius: "12px",
+  backgroundColor: "#161b22",
+  border: "1px solid #30363d",
+  marginBottom: "2rem",
+};
+
+const counterLabelStyle = {
+  margin: "0 0 0.5rem 0",
+  fontSize: "0.95rem",
+  color: "#8b949e",
+};
+
+const counterValueStyle = {
+  fontSize: "2.25rem",
+  color: "#3fb950",
+  fontWeight: 800,
+};
+
+const headerContent = (
+  <>
+    <span
+      style={{
+        display: "inline-block",
+        padding: "0.35rem 0.85rem",
+        borderRadius: "999px",
+        backgroundColor: "#1f2937",
+        border: "1px solid #30363d",
+        color: "#58a6ff",
+        fontSize: "0.875rem",
+        fontWeight: 600,
+        marginBottom: "1.25rem",
+      }}
+    >
+      🚧 Em Construção
+    </span>
+
+    <h1
+      style={{
+        fontSize: "2rem",
+        lineHeight: 1.4,
+        fontWeight: 700,
+        margin: "0 0 2rem 0",
+        color: "#f0f6fc",
+      }}
+    >
+      Estamos neste exato momento reconstruindo o TabNews, um lugar na internet
+      para quem trabalha com tecnologia e precisa consumir conteúdos com valor
+      concreto
+    </h1>
+  </>
+);
+
+const counterFallback = (
+  <strong style={counterValueStyle}>Carregando...</strong>
+);
+
+const officialLink = (
+  <a
+    href="https://www.tabnews.com.br"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+      display: "inline-block",
+      padding: "0.75rem 1.5rem",
+      borderRadius: "8px",
+      backgroundColor: "#238636",
+      color: "#ffffff",
+      textDecoration: "none",
+      fontWeight: 600,
+      fontSize: "1rem",
+    }}
+  >
+    Acessar o TabNews oficial →
+  </a>
+);
 
 async function getTotalPublishedContents() {
   try {
@@ -18,105 +114,34 @@ async function getTotalPublishedContents() {
   }
 }
 
-export default async function Page() {
+async function TotalPublishedContents() {
   const totalContents = await getTotalPublishedContents();
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem",
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-        backgroundColor: "#0d1117",
-        color: "#e6edf3",
-        textAlign: "center",
-        boxSizing: "border-box",
-      }}
-    >
+    <strong style={counterValueStyle}>
+      {totalContents ?? "Indisponível no momento"}
+    </strong>
+  );
+}
+
+export default function Page() {
+  return (
+    <main style={mainStyle}>
       <Confetti />
 
-      <div style={{ maxWidth: "680px" }}>
-        <span
-          style={{
-            display: "inline-block",
-            padding: "0.35rem 0.85rem",
-            borderRadius: "999px",
-            backgroundColor: "#1f2937",
-            border: "1px solid #30363d",
-            color: "#58a6ff",
-            fontSize: "0.875rem",
-            fontWeight: 600,
-            marginBottom: "1.25rem",
-          }}
-        >
-          🚧 Em Construção
-        </span>
+      <div style={containerStyle}>
+        {headerContent}
 
-        <h1
-          style={{
-            fontSize: "2rem",
-            lineHeight: 1.4,
-            fontWeight: 700,
-            margin: "0 0 2rem 0",
-            color: "#f0f6fc",
-          }}
-        >
-          Estamos neste exato momento reconstruindo o TabNews, um lugar na
-          internet para quem trabalha com tecnologia e precisa consumir
-          conteúdos com valor concreto
-        </h1>
-
-        <div
-          style={{
-            padding: "1.5rem",
-            borderRadius: "12px",
-            backgroundColor: "#161b22",
-            border: "1px solid #30363d",
-            marginBottom: "2rem",
-          }}
-        >
-          <p
-            style={{
-              margin: "0 0 0.5rem 0",
-              fontSize: "0.95rem",
-              color: "#8b949e",
-            }}
-          >
+        <div style={cardStyle}>
+          <p style={counterLabelStyle}>
             Total de conteúdos publicados no TabNews agora:
           </p>
-          <strong
-            style={{
-              fontSize: "2.25rem",
-              color: "#3fb950",
-              fontWeight: 800,
-            }}
-          >
-            {totalContents ?? "Indisponível no momento"}
-          </strong>
+          <Suspense fallback={counterFallback}>
+            <TotalPublishedContents />
+          </Suspense>
         </div>
 
-        <a
-          href="https://www.tabnews.com.br"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: "inline-block",
-            padding: "0.75rem 1.5rem",
-            borderRadius: "8px",
-            backgroundColor: "#238636",
-            color: "#ffffff",
-            textDecoration: "none",
-            fontWeight: 600,
-            fontSize: "1rem",
-          }}
-        >
-          Acessar o TabNews oficial →
-        </a>
+        {officialLink}
       </div>
     </main>
   );
